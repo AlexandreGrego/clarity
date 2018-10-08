@@ -95,13 +95,11 @@ export function addHelpers(): void {
         imports: [ClarityModule],
         declarations: [testComponent, ...extraDirectives],
         providers: providers,
-      })
-        .overrideComponent(clarityDirective, {
-          set: {
-            providers: serviceOverrides,
-          },
-        })
-        .compileComponents();
+      }).overrideComponent(clarityDirective, {
+        set: {
+          providers: serviceOverrides,
+        },
+      });
       return (this._context = new TestContext<D, C>(clarityDirective, testComponent));
     };
   });

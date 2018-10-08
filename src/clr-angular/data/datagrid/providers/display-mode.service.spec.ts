@@ -4,7 +4,7 @@
  * The full license information can be found in LICENSE in the root directory of this project.
  */
 
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 import { MockDatagridRenderOrganizer } from '../render/render-organizer.mock';
 
@@ -15,6 +15,7 @@ import { MockDisplayModeService } from './display-mode.mock';
 interface UserContext {
   organizer: MockDatagridRenderOrganizer;
   displayService: MockDisplayModeService;
+  displayViewServiceSubscription: Subscription;
 }
 
 export default function(): void {
@@ -22,6 +23,12 @@ export default function(): void {
     beforeEach(function(this: UserContext) {
       this.organizer = new MockDatagridRenderOrganizer();
       this.displayService = new MockDisplayModeService(this.organizer);
+    });
+
+    afterEach(function(this: UserContext) {
+      if (this.displayViewServiceSubscription) {
+        this.displayViewServiceSubscription.unsubscribe();
+      }
     });
 
     it('exposes an Observable for display mode view state', function() {
@@ -33,7 +40,7 @@ export default function(): void {
     it('properly updates the view mode when organizer resizes', function(this: UserContext) {
       let currentChange: DatagridDisplayMode;
       let displayChangeCount = 0;
-      this.displayService.view.subscribe(viewChange => {
+      this.displayViewServiceSubscription = this.displayService.view.subscribe(viewChange => {
         displayChangeCount++;
         currentChange = viewChange;
       });
@@ -46,7 +53,7 @@ export default function(): void {
     it('it defaults to DatagridDisplayMode.DISPLAY', function() {
       const viewObservable = this.displayService.view;
       let currentView = null;
-      viewObservable.subscribe(viewChange => {
+      this.displayViewServiceSubscription = viewObservable.subscribe(viewChange => {
         currentView = viewChange;
       });
       expect(currentView).toBe(DatagridDisplayMode.DISPLAY);
@@ -55,7 +62,7 @@ export default function(): void {
     it('updates the view for DatagridDisplayMode.DISPLAY', function() {
       const viewObservable = this.displayService.view;
       let currentView = null;
-      viewObservable.subscribe(viewChange => {
+      this.displayViewServiceSubscription = viewObservable.subscribe(viewChange => {
         currentView = viewChange;
       });
       this.organizer.updateRenderStep.next(DatagridRenderStep.CALCULATE_MODE_OFF);
@@ -65,7 +72,7 @@ export default function(): void {
     it('updates the view for DatagridDisplayMode.CALCULATE', function() {
       const viewObservable = this.displayService.view;
       let currentView = null;
-      viewObservable.subscribe(viewChange => {
+      this.displayViewServiceSubscription = viewObservable.subscribe(viewChange => {
         currentView = viewChange;
       });
       this.organizer.updateRenderStep.next(DatagridRenderStep.CALCULATE_MODE_ON);

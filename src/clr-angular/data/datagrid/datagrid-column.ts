@@ -11,6 +11,7 @@ import {
   HostBinding,
   Injector,
   Input,
+  OnDestroy,
   OnInit,
   Output,
   ViewChild,
@@ -73,7 +74,7 @@ let nbCount: number = 0;
   },
 })
 export class ClrDatagridColumn<T = any> extends DatagridFilterRegistrar<T, DatagridStringFilterImpl<T>>
-  implements OnInit {
+  implements OnDestroy, OnInit {
   constructor(
     private _sort: Sort<T>,
     filters: FiltersProvider<T>,

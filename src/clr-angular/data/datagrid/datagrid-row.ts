@@ -183,22 +183,22 @@ export class ClrDatagridRow<T = any> implements AfterContentInit, AfterViewInit 
       this.displayMode.view.subscribe(viewChange => {
         // Listen for view changes and move cells around depending on the current displayType
         // remove cell views from display view
-        for (let i = this.scrollableCells.length; i > 0; i--) {
-          this.scrollableCells.detach();
+        for (let i = this._scrollableCells.length; i > 0; i--) {
+          this._scrollableCells.detach();
         }
         // remove cell views from calculated view
-        for (let i = this.calculatedCells.length; i > 0; i--) {
-          this.calculatedCells.detach();
+        for (let i = this._calculatedCells.length; i > 0; i--) {
+          this._calculatedCells.detach();
         }
         if (viewChange === DatagridDisplayMode.CALCULATE) {
           this.displayCells = false;
           this.dgCells.forEach(cell => {
-            this.calculatedCells.insert(cell._view);
+            this._calculatedCells.insert(cell._view);
           });
         } else {
           this.displayCells = true;
           this.dgCells.forEach(cell => {
-            this.scrollableCells.insert(cell._view);
+            this._scrollableCells.insert(cell._view);
           });
         }
       })
@@ -230,12 +230,13 @@ export class ClrDatagridRow<T = any> implements AfterContentInit, AfterViewInit 
   }
 
   public displayCells = false;
+
   @ViewChild('stickyCells', { read: ViewContainerRef })
-  stickyCells: ViewContainerRef;
+  _stickyCells: ViewContainerRef;
   @ViewChild('scrollableCells', { read: ViewContainerRef })
-  scrollableCells: ViewContainerRef;
+  _scrollableCells: ViewContainerRef;
   @ViewChild('calculatedCells', { read: ViewContainerRef })
-  calculatedCells: ViewContainerRef;
+  _calculatedCells: ViewContainerRef;
 
   private wrappedInjector: Injector;
 

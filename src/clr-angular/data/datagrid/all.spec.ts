@@ -59,7 +59,6 @@ describe('Datagrid', function() {
   addHelpers();
 
   describe('Providers', function() {
-    /**/
     SortProviderSpecs();
     FiltersProviderSpecs();
     PageProviderSpecs();
@@ -91,7 +90,6 @@ describe('Datagrid', function() {
     WrappedCellSpec();
     WrappedColumnSpec();
     WrappedRowSpec();
-    // DatagridProjectionSpec();
   });
   describe('Render', function() {
     DomAdapterSpecs();

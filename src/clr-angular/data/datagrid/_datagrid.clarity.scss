@@ -140,7 +140,7 @@
         color: $clr-app-font-color-primary;
         cursor: pointer;
         display: block;
-        line-height: calc(#{clr-getTypePropertyValueForDomElement(dropdown_text, line-height)} - 1px);
+        line-height: calc(#{clr-getTypePropertyValueForDomElement(dropdown_text, line-height)} - #{$clr-rem-1px});
         margin: 0;
         padding: 1px 1rem 0;
         text-align: left;
@@ -470,7 +470,7 @@
           position: absolute;
           height: calc(100% + #{$clr-datagrid-column-separator-expandby} - #{$clr-default-borderwidth});
           width: $clr-rem-1px;
-          top: calc(-0.5 * #{$clr-datagrid-column-separator-expandby} + 1px);
+          top: calc(-0.5 * #{$clr-datagrid-column-separator-expandby} + #{$clr-rem-1px});
           left: 0;
           background-color: $clr-table-border-color;
         }
@@ -479,7 +479,7 @@
           @include clr-no-styles-button();
           display: block;
           position: absolute;
-          width: calc(0.5rem + 1px);
+          width: calc(0.5rem + #{$clr-rem-1px});
           right: -0.5rem;
           top: -0.25rem;
           cursor: col-resize;
@@ -571,16 +571,16 @@
         justify-content: center;
         font-size: clr-getTypePropertyValueForDomElement(datagrid_placeholder, font-size);
         color: $clr-dark-midtone-gray;
+      }
 
-        .datagrid-placeholder-image {
-          width: 2.5rem;
-          height: 2.5rem;
-          margin-bottom: 0.5rem;
-          background-repeat: no-repeat;
-          background-size: contain;
-          background-position: center;
-          background-image: generateEmptyDatagridPlaceholder();
-        }
+      .datagrid-placeholder-image {
+        width: 2.5rem;
+        height: 2.5rem;
+        margin-bottom: 0.5rem;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;
+        background-image: generateEmptyDatagridPlaceholder();
       }
     }
   }
@@ -834,7 +834,7 @@
     .datagrid-footer {
       height: 1rem;
       padding: 0 $clr-table-cellpadding;
-      line-height: calc(1rem - 1px);
+      line-height: calc(1rem - #{$clr-rem-1px});
       .pagination-list {
         height: calc(1rem - #{2 * $clr-default-borderwidth});
       }

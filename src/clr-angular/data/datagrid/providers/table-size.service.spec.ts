@@ -10,13 +10,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DomAdapter } from '../../../utils/dom-adapter/dom-adapter';
 import { DatagridRenderOrganizer } from '../render/render-organizer';
 
-import { ClarityModule } from './../../../clr-angular.module';
 import { DragDispatcher } from './drag-dispatcher';
 import { FiltersProvider } from './filters';
 import { Page } from './page';
 import { Sort } from './sort';
 import { StateDebouncer } from './state-debouncer.provider';
 import { TableSizeService } from './table-size.service';
+import { ClrDatagridModule } from '../datagrid.module';
 
 @Component({
   template: `
@@ -55,7 +55,7 @@ export default function(): void {
   describe('TableSizeService', function() {
     beforeEach(function(this: TestContext) {
       TestBed.configureTestingModule({
-        imports: [ClarityModule],
+        imports: [ClrDatagridModule],
         declarations: [TestComponent],
         providers: [PROVIDERS_NEEDED],
       });

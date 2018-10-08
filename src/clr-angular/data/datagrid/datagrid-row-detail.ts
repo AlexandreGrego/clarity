@@ -110,10 +110,10 @@ export class ClrDatagridRowDetail<T = any> implements AfterContentInit, OnDestro
     });
   }
 
-  toggleExpand() {
-    this.expand.setReplace(!this.replacedRow);
-    this.expand.expanded = !this.expand.expanded;
-  }
+  // toggleExpand() {
+  //   this.expand.setReplace(!this.replacedRow);
+  //   this.expand.expanded = !this.expand.expanded;
+  // }
 
   ngOnDestroy() {
     this.subscriptions.forEach(sub => sub.unsubscribe());

@@ -73,7 +73,7 @@ export class ClrDatagrid<T = any> implements AfterContentInit, AfterViewInit, On
     public selection: Selection<T>,
     public rowActionService: RowActionService,
     private stateProvider: StateProvider<T>,
-    public displayMode: DisplayModeService,
+    private displayMode: DisplayModeService,
     private renderer: Renderer2,
     private el: ElementRef,
     public commonStrings: ClrCommonStrings
@@ -212,7 +212,7 @@ export class ClrDatagrid<T = any> implements AfterContentInit, AfterViewInit, On
           this.items.all = this.rows.map((row: ClrDatagridRow<T>) => row.item);
         }
         this.rows.forEach(row => {
-          this.displayedRows.insert(row._view);
+          this._displayedRows.insert(row._view);
         });
       })
     );
@@ -243,36 +243,41 @@ export class ClrDatagrid<T = any> implements AfterContentInit, AfterViewInit, On
         }
       })
     );
+    // A subscription that listens for displayMode changes on the datagrid
     this.displayMode.view.subscribe(viewChange => {
-      for (let i = this.projectedDisplayColumns.length; i > 0; i--) {
-        this.projectedDisplayColumns.detach();
+      // Remove any projected columns from the projectedDisplayColumns container
+      for (let i = this._projectedDisplayColumns.length; i > 0; i--) {
+        this._projectedDisplayColumns.detach();
       }
-      for (let i = this.projectedCalculationColumns.length; i > 0; i--) {
-        this.projectedCalculationColumns.detach();
+      // Remove any projected columns from the projectedCalculationColumns container
+      for (let i = this._projectedCalculationColumns.length; i > 0; i--) {
+        this._projectedCalculationColumns.detach();
       }
-      for (let i = this.calculationRows.length; i > 0; i--) {
-        this.calculationRows.detach();
+      // Remove any projected rows from the calculationRows container
+      for (let i = this._calculationRows.length; i > 0; i--) {
+        this._calculationRows.detach();
       }
-      for (let i = this.displayedRows.length; i > 0; i--) {
-        this.displayedRows.detach();
+      // Remove any projected rows from the displayedRows container
+      for (let i = this._displayedRows.length; i > 0; i--) {
+        this._displayedRows.detach();
       }
       if (viewChange === DatagridDisplayMode.DISPLAY) {
-        this.showDisplayTable = true;
+        // Set state, style for the datagrid to DISPLAY and insert row & columns into containers
         this.renderer.removeClass(this.el.nativeElement, 'datagrid-calculate-mode');
         this.columns.forEach(column => {
-          this.projectedDisplayColumns.insert(column._view);
+          this._projectedDisplayColumns.insert(column._view);
         });
         this.rows.forEach(row => {
-          this.displayedRows.insert(row._view);
+          this._displayedRows.insert(row._view);
         });
       } else {
-        this.showDisplayTable = false;
+        // Set state, style for the datagrid to CALCULATE and insert row & columns into containers
         this.renderer.addClass(this.el.nativeElement, 'datagrid-calculate-mode');
         this.columns.forEach(column => {
-          this.projectedCalculationColumns.insert(column._view);
+          this._projectedCalculationColumns.insert(column._view);
         });
         this.rows.forEach(row => {
-          this.calculationRows.insert(row._view);
+          this._calculationRows.insert(row._view);
         });
       }
     });
@@ -292,12 +297,11 @@ export class ClrDatagrid<T = any> implements AfterContentInit, AfterViewInit, On
   }
 
   @ViewChild('projectedDisplayColumns', { read: ViewContainerRef })
-  projectedDisplayColumns: ViewContainerRef;
+  _projectedDisplayColumns: ViewContainerRef;
   @ViewChild('projectedCalculationColumns', { read: ViewContainerRef })
-  projectedCalculationColumns: ViewContainerRef;
+  _projectedCalculationColumns: ViewContainerRef;
   @ViewChild('displayedRows', { read: ViewContainerRef })
-  displayedRows: ViewContainerRef;
+  _displayedRows: ViewContainerRef;
   @ViewChild('calculationRows', { read: ViewContainerRef })
-  calculationRows: ViewContainerRef;
-  public showDisplayTable;
+  _calculationRows: ViewContainerRef;
 }

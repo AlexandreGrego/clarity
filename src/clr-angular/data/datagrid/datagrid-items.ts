@@ -10,23 +10,23 @@ import {
   Input,
   IterableDiffer,
   IterableDiffers,
-  OnChanges,
-  SimpleChange,
-  SimpleChanges,
   TemplateRef,
   TrackByFunction,
   ViewContainerRef,
+  OnDestroy,
 } from '@angular/core';
 
 import { Items } from './providers/items';
+import { Subscription } from 'rxjs';
 
 @Directive({
   selector: '[clrDgItems][clrDgItemsOf]',
 })
-export class ClrDatagridItems<T> implements OnChanges, DoCheck {
+export class ClrDatagridItems<T> implements DoCheck, OnDestroy {
   private iterableProxy: NgForOf<T>;
   private _rawItems: T[];
-  private _differ: IterableDiffer<T> | null = null;
+  private differ: IterableDiffer<T> | null = null;
+  private subscriptions: Subscription[] = [];
 
   @Input('clrDgItemsOf')
   public set rawItems(items: T[]) {
@@ -41,37 +41,34 @@ export class ClrDatagridItems<T> implements OnChanges, DoCheck {
   constructor(
     public template: TemplateRef<NgForOfContext<T>>,
     private differs: IterableDiffers,
-    private _items: Items,
-    private vcr: ViewContainerRef,
-    private _differs: IterableDiffers
+    private items: Items,
+    private vcr: ViewContainerRef
   ) {
-    _items.smartenUp();
+    items.smartenUp();
     this.iterableProxy = new NgForOf<T>(this.vcr, this.template, this.differs);
-    _items.change.subscribe(items => {
-      this.iterableProxy.ngForOf = items;
-      this.iterableProxy.ngDoCheck();
-    });
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    // TODO: REMOVE WHEN CLARITY MIN-SUPPORT  IS UPGRADED TO >= ANGULAR 6.1
-    if ('ngOnChanges' in this.iterableProxy) {
-      changes.ngForOf = new SimpleChange(undefined, this._items.displayed, true);
-      (<OnChanges>this.iterableProxy).ngOnChanges(changes);
-    }
+    this.subscriptions.push(
+      items.change.subscribe(newItems => {
+        this.iterableProxy.ngForOf = newItems;
+        this.iterableProxy.ngDoCheck();
+      })
+    );
   }
 
   ngDoCheck() {
-    if (!this._differ) {
-      this._differ = this._differs.find(this._rawItems).create(this.iterableProxy.ngForTrackBy);
+    if (!this.differ) {
+      this.differ = this.differs.find(this._rawItems).create(this.iterableProxy.ngForTrackBy);
     }
-    if (this._differ) {
-      const changes = this._differ.diff(this._rawItems);
+    if (this.differ) {
+      const changes = this.differ.diff(this._rawItems);
       if (changes) {
         // TODO: not very efficient right now,
         // but premature optimization is the root of all evil.
-        this._items.all = this._rawItems;
+        this.items.all = this._rawItems;
       }
     }
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 }
